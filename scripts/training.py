@@ -65,7 +65,7 @@ def learnConcatRealImagBlock(I, filter_size, featmaps, stage, block, convArgs, b
 def getResidualBlock(I, filter_size, featmaps, stage, block, shortcut, convArgs, bnArgs, d):
 	"""Get residual block."""
 	
-	activation           = d.act
+	advanced_act         = d.aact
 	drop_prob            = d.dropout
 	nb_fmaps1, nb_fmaps2 = featmaps
 	conv_name_base       = 'res'+str(stage)+block+'_branch'
@@ -80,7 +80,7 @@ def getResidualBlock(I, filter_size, featmaps, stage, block, shortcut, convArgs,
 		O = BatchNormalization(name=bn_name_base+'_2a', **bnArgs)(I)
 	elif d.model == "complex":
 		O = ComplexBN(name=bn_name_base+'_2a', **bnArgs)(I)
-	O = Activation(activation)(O)
+	O = Activation(advanced_act)(O)
 	
 	if shortcut == 'regular' or d.spectral_pool_scheme == "nodownsample":
 		if   d.model == "real":
@@ -97,11 +97,11 @@ def getResidualBlock(I, filter_size, featmaps, stage, block, shortcut, convArgs,
 	
 	if   d.model == "real":
 		O = BatchNormalization(name=bn_name_base+'_2b', **bnArgs)(O)
-		O = Activation(activation)(O)
+		O = Activation(advanced_act)(O)
 		O = Conv2D(nb_fmaps2, filter_size, name=conv_name_base+'2b', **convArgs)(O)
 	elif d.model == "complex":
 		O = ComplexBN(name=bn_name_base+'_2b', **bnArgs)(O)
-		O = Activation(activation)(O)
+		O = Activation(advanced_act)(O)
 		O = ComplexConv2D(nb_fmaps2, filter_size, name=conv_name_base+'2b', **convArgs)(O)
 	
 	if   shortcut == 'regular':
@@ -190,7 +190,7 @@ def getResnetModel(d):
 	else:
 		O = ComplexConv2D(sf, filsize, name='conv1', **convArgs)(O)
 		O = ComplexBN(name="bn_conv1_2a", **bnArgs)(O)
-	O = Activation(activation)(O)
+	O = Activation(advanced_act)(O)
 	
 	#
 	# Stage 2

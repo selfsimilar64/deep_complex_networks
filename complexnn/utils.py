@@ -13,6 +13,8 @@ from keras.layers import Layer, Lambda
 
 
 def get_realpart(x):
+    # Return first half of channels!
+
     image_format = K.image_data_format()
     ndim = K.ndim(x)
     input_shape = K.shape(x)
@@ -31,6 +33,8 @@ def get_realpart(x):
 
 
 def get_imagpart(x):
+    # Return second half of channels!
+
     image_format = K.image_data_format()
     ndim = K.ndim(x)
     input_shape = K.shape(x)
