@@ -511,17 +511,12 @@ def tanh(Z):
 
 def tanh_z(Z):
     input_dim = K.shape(Z)[1] // 2
-    Z_sgn = K.sign(Z)
-    Z_abs = K.abs(Z)
-    X = Z_abs[:, :input_dim]
-    Y = Z_abs[:, input_dim:]
-    A = K.exp(-2 * X)
-    B = K.exp(-4 * X)
-    C = 2*A*K.cos(2*Y) + B + 1
-    U = (1 - B) / C
-    V = 2*A*K.sin(2*Y) / C
+    X = Z[:, :input_dim]
+    Y = Z[:, input_dim:]
+    A = K.T.cosh(2 * X) + K.cos(2 * Y) + 1e-5
+    U = K.clip(K.T.sinh(2 * X) / A, -1000, 10)
+    V = K.clip(K.sin(2 * Y) / A, -1000, 10)
     W = K.concatenate([U, V], axis=1)
-    W = W * Z_sgn
 
     return W
 
