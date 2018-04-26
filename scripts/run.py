@@ -114,8 +114,8 @@ class Train(Subcommand):
 		argp.add_argument("--act",                  default="relu",             type=str,
 		    choices=["relu"],
 		    help="Activation.")
-		argp.add_argument("--aact",                 default="modrelu",          type=str,
-		    choices=["modrelu"],
+		argp.add_argument("--aact",                 default="tanhz",          type=str,
+		    choices=["tanhz"],
 		    help="Advanced Activation.")
 		argp.add_argument("--no-validation", action="store_true",
 		    help="Do not create a separate validation set.")
