@@ -481,8 +481,9 @@ def tanhz(Z):
     X = GetReal()(Z)
     Y = GetImag()(Z)
     A = K.T.cosh(2*X) + K.cos(2*Y)
-    K.concatenate([X, Y])
-    return K.T.sinh(2*X) / A, K.sin(2*Y) / A
+    U = K.T.sinh(2*X) / A
+    V = K.sin(2*Y) / A
+    return K.concatenate([U, V])
 
 #
 # TRAINING PROCESS
