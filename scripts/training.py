@@ -709,14 +709,6 @@ def train(d):
                                          horizontal_flip    = True)
 
 
-    #
-    # Add custom activation functions
-    #
-
-
-    get_custom_objects().update({'tanhz': Activation(tanhz)})
-
-
 
     #
     # Enter training loop.
