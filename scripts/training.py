@@ -478,11 +478,22 @@ def summarizeEnvvar(var):
 # Create custom activation layers
 #
 
+
+class ReLU_z(Activation):
+    def __init__(self, activation, **kwargs):
+        super(ReLU_z, self).__init__(activation, **kwargs)
+        self.__name__ = 'ReLU_z'
+
+
 class Tanh_z(Activation):
 
     def __init__(self, activation, **kwargs):
         super(Tanh_z, self).__init__(activation, **kwargs)
         self.__name__ = 'Tanh_z'
+
+
+def relu_z(Z):
+    return K.maximum(Z, 0)
 
 
 def tanh_z(Z):
@@ -615,7 +626,6 @@ def train(d):
             "ComplexBatchNormalization": ComplexBN,
             "GetReal":                   GetReal,
             "GetImag":                   GetImag,
-            "tanhz":                     tanhz
         })
         L.getLogger("entry").info("... reloading complete.")
 
@@ -627,7 +637,11 @@ def train(d):
         # Model
         L.getLogger("entry").info("Creating new model from scratch.")
         np.random.seed(d.seed % 2**32)
+
         get_custom_objects().update({'tanh_z': Tanh_z(tanh_z)})
+        get_custom_objects().update({'relu_z': ReLU_z(relu_z)})
+
+
         model = getResnetModel(d)
 
         # Optimizer
