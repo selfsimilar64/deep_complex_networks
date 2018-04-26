@@ -617,6 +617,7 @@ def train(d):
         # Model
         L.getLogger("entry").info("Creating new model from scratch.")
         np.random.seed(d.seed % 2**32)
+        get_custom_objects().update({'tanhz': Activation(tanhz)})
         model = getResnetModel(d)
 
         # Optimizer
