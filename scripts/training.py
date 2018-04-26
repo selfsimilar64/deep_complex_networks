@@ -23,7 +23,7 @@ from   keras.optimizers                      import SGD, Adam, RMSprop
 from   keras.preprocessing.image             import ImageDataGenerator
 from   keras.regularizers                    import l2
 from   keras.utils.np_utils                  import to_categorical
-import keras.backend                         as     K
+import keras.backend.theano_backend          as     K
 from keras.utils.generic_utils               import get_custom_objects
 import keras.models                          as     KM
 from   kerosene.datasets                     import svhn2
@@ -480,6 +480,7 @@ def summarizeEnvvar(var):
 def tanhz(Z):
     X = GetReal()(Z)
     Y = GetImag()(Z)
+    K.
     A = K.cosh(2*X) + K.cos(2*Y)
     K.concatenate([X, Y])
     return K.sinh(2*X) / A, K.sin(2*Y) / A
