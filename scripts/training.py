@@ -491,9 +491,7 @@ def tanh_z(Z):
     A = K.T.cosh(2 * X) + K.cos(2 * Y)
     U = K.T.sinh(2 * X) / A
     V = K.sin(2 * Y) / A
-    W = K.concatenate([U, V])
-    print Z.shape
-    print W.shape
+    W = K.concatenate([U, V], axis=1)
     return W
 
 #
