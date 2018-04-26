@@ -492,9 +492,17 @@ class Tanh_z(Activation):
         self.__name__ = 'Tanh_z'
 
 
+class Tanh(Activation):
+    def __init__(self, activation, **kwargs):
+        super(Tanh, self).__init__(activation, **kwargs)
+        self.__name__ = 'Tanh2'
+
+
 def relu_z(Z):
     return K.maximum(Z, 0)
 
+def tanh(Z):
+    return K.tanh(Z)
 
 def tanh_z(Z):
     X = GetReal()(Z)
@@ -638,9 +646,14 @@ def train(d):
         L.getLogger("entry").info("Creating new model from scratch.")
         np.random.seed(d.seed % 2**32)
 
+
+        #
+        # ADD CUSTOM ACTIVATIONS HERE
+        #
+
         get_custom_objects().update({'tanh_z': Tanh_z(tanh_z)})
         get_custom_objects().update({'relu_z': ReLU_z(relu_z)})
-
+        get_custom_objects().update({'tanh2': Tanh(tanh)})
 
         model = getResnetModel(d)
 
