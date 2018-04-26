@@ -484,25 +484,17 @@ class Tanh_z(Activation):
         super(Tanh_z, self).__init__(activation, **kwargs)
         self.__name__ = 'Tanh_z'
 
-    def call(self, x):
-        X = GetReal()(x)
-        Y = GetImag()(x)
-        A = K.T.cosh(2 * X) + K.cos(2 * Y)
-        U = K.T.sinh(2 * X) / A
-        V = K.sin(2 * Y) / A
-        W = K.concatenate([U, V])
-        print x.shape
-        print W.shape
-        return W
 
-
-def tanhz(Z):
+def tanh_z(Z):
     X = GetReal()(Z)
     Y = GetImag()(Z)
-    A = K.T.cosh(2*X) + K.cos(2*Y)
-    U = K.T.sinh(2*X) / A
-    V = K.sin(2*Y) / A
-    return K.concatenate([U, V])
+    A = K.T.cosh(2 * X) + K.cos(2 * Y)
+    U = K.T.sinh(2 * X) / A
+    V = K.sin(2 * Y) / A
+    W = K.concatenate([U, V])
+    print x.shape
+    print W.shape
+    return W
 
 #
 # TRAINING PROCESS
@@ -637,7 +629,7 @@ def train(d):
         # Model
         L.getLogger("entry").info("Creating new model from scratch.")
         np.random.seed(d.seed % 2**32)
-        get_custom_objects().update({'tanh_z': Tanh_z})
+        get_custom_objects().update({'tanh_z': Tanh_z(tanh_z)})
         model = getResnetModel(d)
 
         # Optimizer
