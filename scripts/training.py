@@ -81,6 +81,7 @@ def getResidualBlock(I, filter_size, featmaps, stage, block, shortcut, convArgs,
         O = BatchNormalization(name=bn_name_base+'_2a', **bnArgs)(I)
     elif d.model == "complex":
         O = ComplexBN(name=bn_name_base+'_2a', **bnArgs)(I)
+    print O.shape
     O = Activation(advanced_act)(O)
 
     if shortcut == 'regular' or d.spectral_pool_scheme == "nodownsample":
@@ -474,8 +475,26 @@ def summarizeEnvvar(var):
     else:                 return var+" unset"
 
 #
-# Create custom activation functions
+# Create custom activation layers
 #
+
+class Tanh_z(Activation):
+
+    def __init__(self, activation, **kwargs):
+        super(Tanh_z, self).__init__(activation, **kwargs)
+        self.__name__ = 'Tanh_z'
+
+    def call(self, x):
+        X = GetReal()(x)
+        Y = GetImag()(x)
+        A = K.T.cosh(2 * X) + K.cos(2 * Y)
+        U = K.T.sinh(2 * X) / A
+        V = K.sin(2 * Y) / A
+        W = K.concatenate([U, V])
+        print x.shape
+        print W.shape
+        return W
+
 
 def tanhz(Z):
     X = GetReal()(Z)
@@ -618,7 +637,7 @@ def train(d):
         # Model
         L.getLogger("entry").info("Creating new model from scratch.")
         np.random.seed(d.seed % 2**32)
-        get_custom_objects().update({'tanhz': Activation(tanhz)})
+        get_custom_objects().update({'tanh_z': Tanh_z})
         model = getResnetModel(d)
 
         # Optimizer
