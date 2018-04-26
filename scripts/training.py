@@ -514,8 +514,8 @@ def tanh_z(Z):
     X = Z[:, :input_dim]
     Y = Z[:, input_dim:]
     A = K.T.cosh(2 * X) + K.cos(2 * Y) + 1e-5
-    U = K.clip(K.T.sinh(2 * X) / A, -1000, 10)
-    V = K.clip(K.sin(2 * Y) / A, -1000, 10)
+    U = K.clip(K.T.sinh(2 * X) / A, -10, 10)
+    V = K.clip(K.sin(2 * Y) / A, -10, 10)
     W = K.concatenate([U, V], axis=1)
 
     return W

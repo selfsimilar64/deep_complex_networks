@@ -112,7 +112,7 @@ class Train(Subcommand):
 		    choices=["none", "stagemiddle", "proj", "nodownsample"],
 		    help="""Spectral pooling scheme""")
 		argp.add_argument("--act",                  default="relu",             type=str,
-		    choices=["relu"],
+		    choices=["relu", "tanh"],
 		    help="Activation.")
 		argp.add_argument("--aact",                 default="tanh_z",          type=str,
 		    choices=["tanh_z", "relu_z", "tanh2"],
