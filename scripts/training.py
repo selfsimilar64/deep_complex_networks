@@ -480,9 +480,9 @@ def summarizeEnvvar(var):
 def tanhz(Z):
     X = GetReal()(Z)
     Y = GetImag()(Z)
-    A = K.cosh(2*X) + K.cos(2*Y)
+    A = K.T.cosh(2*X) + K.cos(2*Y)
     K.concatenate([X, Y])
-    return K.sinh(2*X) / A, K.sin(2*Y) / A
+    return K.T.sinh(2*X) / A, K.sin(2*Y) / A
 
 #
 # TRAINING PROCESS
