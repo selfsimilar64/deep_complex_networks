@@ -81,7 +81,6 @@ def getResidualBlock(I, filter_size, featmaps, stage, block, shortcut, convArgs,
         O = BatchNormalization(name=bn_name_base+'_2a', **bnArgs)(I)
     elif d.model == "complex":
         O = ComplexBN(name=bn_name_base+'_2a', **bnArgs)(I)
-    print O.shape
     O = Activation(advanced_act)(O)
 
     if shortcut == 'regular' or d.spectral_pool_scheme == "nodownsample":
@@ -499,7 +498,13 @@ class Tanh(Activation):
 
 
 def relu_z(Z):
-    return K.maximum(Z, 0)
+    input_dim = K.shape(Z)[1] // 2
+    X = Z[:, :input_dim]
+    Y = Z[:, input_dim:]
+    U = K.maximum(X, 0)
+    V = K.maximum(Y, 0)
+    W = K.concatenate([U, V], axis=1)
+    return W
 
 def tanh(Z):
     return K.tanh(Z)
