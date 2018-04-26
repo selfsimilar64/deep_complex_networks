@@ -115,7 +115,7 @@ class Train(Subcommand):
 		    choices=["relu"],
 		    help="Activation.")
 		argp.add_argument("--aact",                 default="tanh_z",          type=str,
-		    choices=["tanh_z, relu_z"],
+		    choices=["tanh_z", "relu_z"],
 		    help="Advanced Activation.")
 		argp.add_argument("--no-validation", action="store_true",
 		    help="Do not create a separate validation set.")
