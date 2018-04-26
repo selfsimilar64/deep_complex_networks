@@ -89,11 +89,3 @@ class GetAbs(Layer):
         return get_abs(inputs)
     def compute_output_shape(self, input_shape):
         return getpart_output_shape(input_shape)
-
-
-def tanhz(Z):
-    X = get_realpart(Z)
-    Y = get_imagpart(Z)
-    A = K.cosh(2*X) + K.cos(2*Y)
-    K.concatenate([X, Y])
-    return K.sinh(2*X) / A, K.sin(2*Y) / A

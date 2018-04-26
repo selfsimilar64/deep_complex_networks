@@ -11,7 +11,7 @@ from   complexnn                             import ComplexBN,\
                                                     ComplexDense,\
                                                     FFT,IFFT,FFT2,IFFT2,\
                                                     SpectralPooling1D,SpectralPooling2D
-from complexnn import GetImag, GetReal, tanhz
+from complexnn import GetImag, GetReal
 import h5py                                  as     H
 import keras
 from   keras.callbacks                       import Callback, ModelCheckpoint, LearningRateScheduler
@@ -474,6 +474,17 @@ def summarizeEnvvar(var):
     else:                 return var+" unset"
 
 #
+# Create custom activation functions
+#
+
+def tanhz(Z):
+    X = GetReal()(Z)
+    Y = GetImag()(Z)
+    A = K.cosh(2*X) + K.cos(2*Y)
+    K.concatenate([X, Y])
+    return K.sinh(2*X) / A, K.sin(2*Y) / A
+
+#
 # TRAINING PROCESS
 #
 
@@ -593,7 +604,8 @@ def train(d):
             "ComplexConv2D":             ComplexConv2D,
             "ComplexBatchNormalization": ComplexBN,
             "GetReal":                   GetReal,
-            "GetImag":                   GetImag
+            "GetImag":                   GetImag,
+            "tanhz":                     tanhz
         })
         L.getLogger("entry").info("... reloading complete.")
 
