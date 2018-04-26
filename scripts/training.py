@@ -492,7 +492,7 @@ def tanh_z(Z):
     U = K.T.sinh(2 * X) / A
     V = K.sin(2 * Y) / A
     W = K.concatenate([U, V])
-    print x.shape
+    print Z.shape
     print W.shape
     return W
 
