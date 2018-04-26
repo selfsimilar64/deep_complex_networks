@@ -501,8 +501,8 @@ def relu_z(Z):
     input_dim = K.shape(Z)[1] // 2
     X = Z[:, :input_dim]
     Y = Z[:, input_dim:]
-    U = K.maximum(X, 0)
-    V = K.maximum(Y, 0)
+    U = K.T.maximum(X, 0)
+    V = K.T.maximum(Y, 0)
     W = K.concatenate([U, V], axis=1)
     return W
 
