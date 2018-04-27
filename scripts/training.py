@@ -12,6 +12,7 @@ from   complexnn                             import ComplexBN,\
                                                     FFT,IFFT,FFT2,IFFT2,\
                                                     SpectralPooling1D,SpectralPooling2D
 from complexnn import GetImag, GetReal
+import math
 import h5py                                  as     H
 import keras
 from   keras.callbacks                       import Callback, ModelCheckpoint, LearningRateScheduler
@@ -501,27 +502,17 @@ def relu_sgn(Z):
     input_dim = K.shape(Z)[1] // 2
     X = Z[:, :input_dim]
     Y = Z[:, input_dim:]
-
     Z_mod = K.sqrt(K.pow(X, 2) + K.pow(Y, 2))
-    X_mask = K.zeros_like(X)
-    Y_mask = K.zeros_like(Y)
     X_proj = X / Z_mod
     Y_proj = Y / Z_mod
-    X_sgn = K.sign(X + 1e-8)
-    Y_sgn = K.sign(Y + 1e-8)
-    xor_sgn = K.pow(X_sgn - Y_sgn, 2) / 4
-    and_sgn = (X_sgn + Y_sgn + 2) / 4
-
-    # Exclusively X or Y positive --> proj
-    X_mask += xor_sgn * X_proj
-    Y_mask += xor_sgn * Y_proj
-
-    # Both X and Y positive --> 1
-    X_mask += and_sgn
-    Y_mask += and_sgn
-
-    U = X * X_mask
-    V = Y * Y_mask
+    Z_arg = K.T.arctan2(Y, X)
+    Z_quad2 = K.sign(K.clip(Z_arg, math.pi / 2.0, math.pi))
+    Z_quad4 = -K.sign(K.clip(Z_arg, math.pi / -2.0, 0))
+    Z_xor = Z_quad2 + Z_quad4
+    X_mask = X_proj * Z_xor
+    Y_mask = Y_proj * Z_xor
+    U = K.maximum(X, 0) * X_mask
+    V = K.maximum(Y, 0) * Y_mask
     W = K.concatenate([U, V], axis=1)
     return W
 
