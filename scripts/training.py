@@ -478,10 +478,10 @@ def summarizeEnvvar(var):
 #
 
 
-class ReLU_z(Activation):
+class ReLU_sgn(Activation):
     def __init__(self, activation, **kwargs):
-        super(ReLU_z, self).__init__(activation, **kwargs)
-        self.__name__ = 'ReLU_z'
+        super(ReLU_sgn, self).__init__(activation, **kwargs)
+        self.__name__ = 'ReLU_sgn'
 
 
 class Tanh_z(Activation):
@@ -497,12 +497,15 @@ class Tanh(Activation):
         self.__name__ = 'Tanh2'
 
 
-def relu_z(Z):
+def relu_sgn(Z):
     input_dim = K.shape(Z)[1] // 2
     X = Z[:, :input_dim]
     Y = Z[:, input_dim:]
-    U = K.T.cosh(X)
-    V = K.T.sinh(Y)
+    Z_abs = K.sqrt(K.pow(X, 2) + K.pow(Y, 2))
+    X_sgn = X / Z_abs
+    Y_sgn = Y / Z_abs
+    U = K.maximum(X, 0) * X_sgn
+    V = K.maximum(Y, 0) * Y_sgn
     W = K.concatenate([U, V], axis=1)
     return W
 
@@ -654,12 +657,18 @@ def train(d):
         np.random.seed(d.seed % 2**32)
 
 
+
+
+
+
+
+
         #
         # ADD CUSTOM ACTIVATIONS HERE
         #
 
         get_custom_objects().update({'tanh_z': Tanh_z(tanh_z)})
-        get_custom_objects().update({'relu_z': ReLU_z(relu_z)})
+        get_custom_objects().update({'relu_z': ReLU_sgn(relu_sgn)})
         get_custom_objects().update({'tanh2': Tanh(tanh)})
 
         model = getResnetModel(d)
