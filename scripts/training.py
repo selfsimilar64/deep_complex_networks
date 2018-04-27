@@ -491,12 +491,6 @@ class Tanh_z(Activation):
         self.__name__ = 'Tanh_z'
 
 
-class Tanh(Activation):
-    def __init__(self, activation, **kwargs):
-        super(Tanh, self).__init__(activation, **kwargs)
-        self.__name__ = 'Tanh2'
-
-
 def relu_sgn(Z):
     input_dim = K.shape(Z)[1] // 2
     X = Z[:, :input_dim]
@@ -509,8 +503,6 @@ def relu_sgn(Z):
     W = K.concatenate([U, V], axis=1)
     return W
 
-def tanh(Z):
-    return K.tanh(Z)
 
 def tanh_z(Z):
     input_dim = K.shape(Z)[1] // 2
@@ -669,7 +661,6 @@ def train(d):
 
         get_custom_objects().update({'tanh_z': Tanh_z(tanh_z)})
         get_custom_objects().update({'relu_sgn': ReLU_sgn(relu_sgn)})
-        get_custom_objects().update({'tanh2': Tanh(tanh)})
 
         model = getResnetModel(d)
 
