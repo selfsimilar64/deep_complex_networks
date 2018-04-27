@@ -485,10 +485,10 @@ class ReLU_sgn(Activation):
         self.__name__ = 'ReLU_sgn'
 
 
-class Sgn(Activation):
+class ReLU_sgn_xor(Activation):
     def __init__(self, activation, **kwargs):
-        super(Sgn, self).__init__(activation, **kwargs)
-        self.__name__ = 'Sgn'
+        super(ReLU_sgn_xor, self).__init__(activation, **kwargs)
+        self.__name__ = 'ReLU_sgn_xor'
 
 
 class Tanh_z(Activation):
@@ -505,6 +505,19 @@ def relu_sgn(Z):
     Z_mod = K.sqrt(K.pow(X, 2) + K.pow(Y, 2))
     X_proj = X / Z_mod
     Y_proj = Y / Z_mod
+    U = K.maximum(X, 0) * X_proj
+    V = K.maximum(Y, 0) * Y_proj
+    W = K.concatenate([U, V], axis=1)
+    return W
+
+
+def relu_sgn_xor(Z):
+    input_dim = K.shape(Z)[1] // 2
+    X = Z[:, :input_dim]
+    Y = Z[:, input_dim:]
+    Z_mod = K.sqrt(K.pow(X, 2) + K.pow(Y, 2))
+    X_proj = X / Z_mod
+    Y_proj = Y / Z_mod
     Z_arg = K.T.arctan2(Y, X)
     Z_quad2 = K.sign(K.clip(Z_arg, math.pi / 2.0, math.pi))
     Z_quad4 = -K.sign(K.clip(Z_arg, math.pi / -2.0, 0))
@@ -515,15 +528,6 @@ def relu_sgn(Z):
     V = K.maximum(Y, 0) * Y_mask
     W = K.concatenate([U, V], axis=1)
     return W
-
-
-def sgn(Z):
-    input_dim = K.shape(Z)[1] // 2
-    X = Z[:, :input_dim]
-    Y = Z[:, input_dim:]
-    Z_abs = K.sqrt(K.pow(X, 2) + K.pow(Y, 2))
-    U = X / Z_abs
-    V = Y / Z_abs
 
 
 def tanh_z(Z):
@@ -681,8 +685,8 @@ def train(d):
         # ADD CUSTOM ACTIVATIONS HERE
         #
 
-        get_custom_objects().update({'tanh_z': Tanh_z(tanh_z)})
-        get_custom_objects().update({'relu_sgn': ReLU_sgn(relu_sgn)})
+        get_custom_objects().update({"tanh_z": Tanh_z(tanh_z), "relu_sgn": ReLU_sgn(relu_sgn),
+                                     "relu_sgn_xor": ReLU_sgn_xor(relu_sgn_xor)})
 
         model = getResnetModel(d)
 
