@@ -668,7 +668,7 @@ def train(d):
         #
 
         get_custom_objects().update({'tanh_z': Tanh_z(tanh_z)})
-        get_custom_objects().update({'relu_z': ReLU_sgn(relu_sgn)})
+        get_custom_objects().update({'relu_sgn': ReLU_sgn(relu_sgn)})
         get_custom_objects().update({'tanh2': Tanh(tanh)})
 
         model = getResnetModel(d)
