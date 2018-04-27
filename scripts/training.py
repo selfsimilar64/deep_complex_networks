@@ -484,6 +484,12 @@ class ReLU_sgn(Activation):
         self.__name__ = 'ReLU_sgn'
 
 
+class Sgn(Activation):
+    def __init__(self, activation, **kwargs):
+        super(Sgn, self).__init__(activation, **kwargs)
+        self.__name__ = 'Sgn'
+
+
 class Tanh_z(Activation):
 
     def __init__(self, activation, **kwargs):
@@ -495,13 +501,38 @@ def relu_sgn(Z):
     input_dim = K.shape(Z)[1] // 2
     X = Z[:, :input_dim]
     Y = Z[:, input_dim:]
-    Z_abs = K.sqrt(K.pow(X, 2) + K.pow(Y, 2))
-    X_sgn = X / Z_abs
-    Y_sgn = Y / Z_abs
-    U = K.maximum(X, 0) * X_sgn
-    V = K.maximum(Y, 0) * Y_sgn
+
+    Z_mod = K.sqrt(K.pow(X, 2) + K.pow(Y, 2))
+    X_mask = K.zeros_like(X)
+    Y_mask = K.zeros_like(Y)
+    X_proj = X / Z_mod
+    Y_proj = Y / Z_mod
+    X_sgn = K.sign(X + 1e-8)
+    Y_sgn = K.sign(Y + 1e-8)
+    xor_sgn = K.pow(X_sgn - Y_sgn, 2) / 4
+    and_sgn = (X_sgn + Y_sgn + 2) / 4
+
+    # Exclusively X or Y positive --> proj
+    X_mask += xor_sgn * X_proj
+    Y_mask += xor_sgn * Y_proj
+
+    # Both X and Y positive --> 1
+    X_mask += and_sgn
+    Y_mask += and_sgn
+
+    U = X * X_mask
+    V = Y * Y_mask
     W = K.concatenate([U, V], axis=1)
     return W
+
+
+def sgn(Z):
+    input_dim = K.shape(Z)[1] // 2
+    X = Z[:, :input_dim]
+    Y = Z[:, input_dim:]
+    Z_abs = K.sqrt(K.pow(X, 2) + K.pow(Y, 2))
+    U = X / Z_abs
+    V = Y / Z_abs
 
 
 def tanh_z(Z):
