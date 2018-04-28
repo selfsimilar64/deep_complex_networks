@@ -505,6 +505,13 @@ class ReLU_wide(Activation):
         self.__name__ = 'ReLU_wide'
 
 
+class Cardioid(Activation):
+
+    def __init__(self, activation, **kwargs):
+        super(Cardioid, self).__init__(activation, **kwargs)
+        self.__name__ = 'Cardioid'
+
+
 def relu_wide(Z):
     # if (-pi/2 < Arg(z) < pi)   : z
     # else                       : 0
@@ -548,7 +555,6 @@ def cardioid(Z):
     W = K.concatenate([U, V], axis=1)
     return W
 
-
 def relu_sgn_xor(Z):
     input_dim = K.shape(Z)[1] // 2
     X = Z[:, :input_dim]
@@ -566,7 +572,6 @@ def relu_sgn_xor(Z):
     V = K.maximum(Y, 0) * Y_mask
     W = K.concatenate([U, V], axis=1)
     return W
-
 
 def tanh_z(Z):
     input_dim = K.shape(Z)[1] // 2
@@ -725,7 +730,8 @@ def train(d):
 
         get_custom_objects().update({"tanh_z": Tanh_z(tanh_z), "relu_sgn": ReLU_sgn(relu_sgn),
                                      "relu_sgn_xor": ReLU_sgn_xor(relu_sgn_xor),
-                                     "relu_wide": ReLU_wide(relu_wide)})
+                                     "relu_wide": ReLU_wide(relu_wide),
+                                     "cardioid": Cardioid(cardioid)})
 
         model = getResnetModel(d)
 
