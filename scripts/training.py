@@ -498,6 +498,30 @@ class Tanh_z(Activation):
         self.__name__ = 'Tanh_z'
 
 
+class ReLU_wide(Activation):
+
+    def __init__(self, activation, **kwargs):
+        super(ReLU_wide, self).__init__(activation, **kwargs)
+        self.__name__ = 'ReLU_wide'
+
+
+def relu_wide(Z):
+    # if (-pi/2 < Arg(z) < pi)   : z
+    # else                       : 0
+    pi = math.pi
+    input_dim = K.shape(Z)[1] // 2
+    X = Z[:, :input_dim]
+    Y = Z[:, input_dim:]
+    Z_arg = K.T.arctan2(Y, X)
+    Z_ge = K.T.nonzero(K.T.ge(Z_arg, pi))
+    Z_le = K.T.nonzero(K.T.le(Z_arg, -pi/2))
+    X = K.T.set_subtensor(X[Z_ge], 0)
+    X = K.T.set_subtensor(X[Z_le], 0)
+    Y = K.T.set_subtensor(Y[Z_ge], 0)
+    Y = K.T.set_subtensor(Y[Z_le], 0)
+    W = K.concatenate([X, Y], axis=1)
+    return W
+
 def relu_sgn(Z):
     input_dim = K.shape(Z)[1] // 2
     X = Z[:, :input_dim]
@@ -686,7 +710,8 @@ def train(d):
         #
 
         get_custom_objects().update({"tanh_z": Tanh_z(tanh_z), "relu_sgn": ReLU_sgn(relu_sgn),
-                                     "relu_sgn_xor": ReLU_sgn_xor(relu_sgn_xor)})
+                                     "relu_sgn_xor": ReLU_sgn_xor(relu_sgn_xor)
+                                     "relu_wide": ReLU_wide(relu_wide)})
 
         model = getResnetModel(d)
 
