@@ -710,7 +710,7 @@ def train(d):
         #
 
         get_custom_objects().update({"tanh_z": Tanh_z(tanh_z), "relu_sgn": ReLU_sgn(relu_sgn),
-                                     "relu_sgn_xor": ReLU_sgn_xor(relu_sgn_xor)
+                                     "relu_sgn_xor": ReLU_sgn_xor(relu_sgn_xor),
                                      "relu_wide": ReLU_wide(relu_wide)})
 
         model = getResnetModel(d)
