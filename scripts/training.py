@@ -550,8 +550,8 @@ def cardioid(Z):
     Y = Z[:, input_dim:]
     Z_arg = K.T.arctan2(Y, X)
     A = (1 + K.T.cos(Z_arg)) / 2.0
-    U = K.T.mul(X, A)
-    V = K.T.mul(Y, A)
+    U = X * A
+    V = Y * A
     W = K.concatenate([U, V], axis=1)
     return W
 
