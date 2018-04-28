@@ -512,6 +512,9 @@ def relu_wide(Z):
     input_dim = K.shape(Z)[1] // 2
     X = Z[:, :input_dim]
     Y = Z[:, input_dim:]
+    X_sign = -K.clip(K.sign(X), -1, 0)
+    Y_sign = -K.clip(K.sign(Y), -1, 0)
+    K.T.and_(X_sign, Y_sign)
     Z_arg = K.T.arctan2(Y, X)
     Z_ge = K.T.nonzero(K.T.ge(Z_arg, pi))
     Z_le = K.T.nonzero(K.T.le(Z_arg, -pi/2))
@@ -531,6 +534,17 @@ def relu_sgn(Z):
     Y_proj = Y / Z_mod
     U = K.maximum(X, 0) * X_proj
     V = K.maximum(Y, 0) * Y_proj
+    W = K.concatenate([U, V], axis=1)
+    return W
+
+def cardioid(Z):
+    input_dim = K.shape(Z)[1] // 2
+    X = Z[:, :input_dim]
+    Y = Z[:, input_dim:]
+    Z_arg = K.T.arctan2(Y, X)
+    A = (1 + K.T.cos(Z_arg)) / 2.0
+    U = K.T.mul(X, A)
+    V = K.T.mul(Y, A)
     W = K.concatenate([U, V], axis=1)
     return W
 
