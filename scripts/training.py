@@ -445,20 +445,20 @@ class SaveBestModel(Callback):
 
 def schedule(epoch):
     if   epoch >=   0 and epoch <  3:
-        lrate = 0.01
+        lrate = 0.02
         if epoch == 0:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     elif epoch >=  3 and epoch < 10:
-        lrate = 0.05
+        lrate = 0.075
         if epoch == 3:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
-    elif epoch >= 10 and epoch < 15:
-        lrate = 0.01
+    elif epoch >= 10 and epoch < 18:
+        lrate = 0.05
         if epoch == 10:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
-    elif epoch >= 15 and epoch < 20:
-        lrate = 0.005
-        if epoch == 15:
+    elif epoch >= 18 and epoch < 20:
+        lrate = 0.01
+        if epoch == 18:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     elif epoch >= 150:
         lrate = 0.0001
