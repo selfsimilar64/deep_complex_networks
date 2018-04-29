@@ -444,15 +444,15 @@ class SaveBestModel(Callback):
 #
 
 def schedule(epoch):
-    if   epoch >=   0 and epoch <  3:
-        lrate = 0.01
+    if   epoch >=   0 and epoch <  20:
+        lrate = 0.05
         if epoch == 0:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
-    elif epoch >=  3 and epoch < 20:
-        lrate = 0.05
+    elif epoch >=  20 and epoch < 25:
+        lrate = 0.01
         if epoch == 10:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
-    elif epoch >= 20 and epoch < 25:
+    elif epoch >= 25 and epoch < 120:
         lrate = 0.005
         if epoch == 100:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
@@ -512,6 +512,13 @@ class Cardioid(Activation):
         self.__name__ = 'Cardioid'
 
 
+class Cardioid_tilt(Activation):
+
+    def __init__(self, activation, **kwargs):
+        super(Cardioid, self).__init__(activation, **kwargs)
+        self.__name__ = 'Cardioid_tilt'
+
+
 def relu_wide(Z):
     # if (-pi/2 < Arg(z) < pi)   : z
     # else                       : 0
@@ -545,11 +552,24 @@ def relu_sgn(Z):
     return W
 
 def cardioid(Z):
+    # Maximum activation at 1
     input_dim = K.shape(Z)[1] // 2
     X = Z[:, :input_dim]
     Y = Z[:, input_dim:]
     Z_arg = K.T.arctan2(Y, X)
-    A = (1 + K.T.cos(Z_arg)) / 2.0
+    A = (1 + K.T.cos(Z_arg)) / 2
+    U = X * A
+    V = Y * A
+    W = K.concatenate([U, V], axis=1)
+    return W
+
+def cardioid_tilt(Z):
+    # Maximum activation at 1 + i
+    input_dim = K.shape(Z)[1] // 2
+    X = Z[:, :input_dim]
+    Y = Z[:, input_dim:]
+    Z_arg = K.T.arctan2(Y, X)
+    A = (1 + K.T.cos(Z_arg - math.pi/4)) / 2
     U = X * A
     V = Y * A
     W = K.concatenate([U, V], axis=1)
@@ -728,10 +748,12 @@ def train(d):
         # ADD CUSTOM ACTIVATIONS HERE
         #
 
-        get_custom_objects().update({"tanh_z": Tanh_z(tanh_z), "relu_sgn": ReLU_sgn(relu_sgn),
+        get_custom_objects().update({"tanh_z": Tanh_z(tanh_z),
+                                     "relu_sgn": ReLU_sgn(relu_sgn),
                                      "relu_sgn_xor": ReLU_sgn_xor(relu_sgn_xor),
                                      "relu_wide": ReLU_wide(relu_wide),
-                                     "cardioid": Cardioid(cardioid)})
+                                     "cardioid": Cardioid(cardioid),
+                                     "cardioid_tilt": Cardioid_tilt(cardioid_tilt)})
 
         model = getResnetModel(d)
 
