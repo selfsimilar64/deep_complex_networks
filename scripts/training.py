@@ -515,7 +515,7 @@ class Cardioid(Activation):
 class Cardioid_tilt(Activation):
 
     def __init__(self, activation, **kwargs):
-        super(Cardioid, self).__init__(activation, **kwargs)
+        super(Cardioid_tilt, self).__init__(activation, **kwargs)
         self.__name__ = 'Cardioid_tilt'
 
 
