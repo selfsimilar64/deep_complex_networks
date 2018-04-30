@@ -443,7 +443,7 @@ class SaveBestModel(Callback):
 # ResNet Learning-rate Schedules.
 #
 
-"""
+
 def schedule(epoch):
     if   epoch >=   0 and epoch <  2:
         lrate = 0.01
@@ -458,9 +458,9 @@ def schedule(epoch):
         if epoch == 18:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     return lrate
+
+
 """
-
-
 def schedule(epoch):
 	if   epoch >=   0 and epoch <  10:
 		lrate = 0.01
@@ -483,6 +483,7 @@ def schedule(epoch):
 		if epoch == 150:
 			L.getLogger("train").info("Current learning rate value is "+str(lrate))
 	return lrate
+"""
 
 #
 # Summarize environment variable.
@@ -613,11 +614,19 @@ def relu_sgn_xor(Z):
 
 def tanh_z(Z):
     input_dim = K.shape(Z)[1] // 2
-    X = Z[:, :input_dim]
-    Y = Z[:, input_dim:]
-    A = K.T.cosh(2 * X) + K.cos(2 * Y) + 1e-5
-    U = K.clip(K.T.sinh(2 * X) / A, -10, 10)
-    V = K.clip(K.sin(2 * Y) / A, -10, 10)
+    X0 = Z[:, :input_dim]
+    Y0 = Z[:, input_dim:]
+    pi = math.pi
+
+    # Scale inputs to disk with radius pi/2 to avoid singularities
+    Z_mod = K.sqrt(K.pow(X0, 2) + K.pow(Y0, 2))
+    A0 = Z_mod * pi/2 + 1
+    X1 = X0 / A0
+    Y1 = Y0 / A0
+
+    A1 = K.T.cosh(2 * X1) + K.cos(2 * Y1)
+    U = K.T.sinh(2 * X1) / A1
+    V = K.sin(2 * Y1) / A1
     W = K.concatenate([U, V], axis=1)
 
     return W
