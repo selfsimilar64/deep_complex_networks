@@ -507,7 +507,7 @@ class Tanh_z(Activation):
 class Asinh_z(Activation):
 
     def __init__(self, activation, **kwargs):
-        super(Tanh_z, self).__init__(activation, **kwargs)
+        super(Asinh_z, self).__init__(activation, **kwargs)
         self.__name__ = 'Asinh_z'
 
 class ReLU_wide(Activation):
