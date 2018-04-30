@@ -443,6 +443,7 @@ class SaveBestModel(Callback):
 # ResNet Learning-rate Schedules.
 #
 
+"""
 def schedule(epoch):
     if   epoch >=   0 and epoch <  2:
         lrate = 0.01
@@ -457,6 +458,31 @@ def schedule(epoch):
         if epoch == 18:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     return lrate
+"""
+
+
+def schedule(epoch):
+	if   epoch >=   0 and epoch <  10:
+		lrate = 0.01
+		if epoch == 0:
+			L.getLogger("train").info("Current learning rate value is "+str(lrate))
+	elif epoch >=  10 and epoch < 100:
+		lrate = 0.1
+		if epoch == 10:
+			L.getLogger("train").info("Current learning rate value is "+str(lrate))
+	elif epoch >= 100 and epoch < 120:
+		lrate = 0.01
+		if epoch == 100:
+			L.getLogger("train").info("Current learning rate value is "+str(lrate))
+	elif epoch >= 120 and epoch < 150:
+		lrate = 0.001
+		if epoch == 120:
+			L.getLogger("train").info("Current learning rate value is "+str(lrate))
+	elif epoch >= 150:
+		lrate = 0.0001
+		if epoch == 150:
+			L.getLogger("train").info("Current learning rate value is "+str(lrate))
+	return lrate
 
 #
 # Summarize environment variable.
