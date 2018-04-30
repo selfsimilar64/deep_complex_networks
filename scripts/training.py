@@ -443,7 +443,7 @@ class SaveBestModel(Callback):
 # ResNet Learning-rate Schedules.
 #
 
-"""
+
 def schedule(epoch):
     if   epoch >=   0 and epoch <  2:
         lrate = 0.01
@@ -458,9 +458,9 @@ def schedule(epoch):
         if epoch == 18:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     return lrate
+
+
 """
-
-
 def schedule(epoch):
     if   epoch >=   0 and epoch <  2:
         lrate = 0.05
@@ -475,6 +475,7 @@ def schedule(epoch):
         if epoch == 18:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     return lrate
+"""
 
 
 """
