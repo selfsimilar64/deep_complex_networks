@@ -504,6 +504,11 @@ class Tanh_z(Activation):
         super(Tanh_z, self).__init__(activation, **kwargs)
         self.__name__ = 'Tanh_z'
 
+class Asinh_z(Activation):
+
+    def __init__(self, activation, **kwargs):
+        super(Tanh_z, self).__init__(activation, **kwargs)
+        self.__name__ = 'Asinh_z'
 
 class ReLU_wide(Activation):
 
@@ -753,7 +758,8 @@ def train(d):
         get_custom_objects().update({"tanh_z": Tanh_z(tanh_z),
                                      "relu_wide": ReLU_wide(relu_wide),
                                      "cardioid": Cardioid(cardioid),
-                                     "cardioid_tilt": Cardioid_tilt(cardioid_tilt)})
+                                     "cardioid_tilt": Cardioid_tilt(cardioid_tilt),
+                                     "asinh_z": Asinh_z(asinh_z)})
 
         model = getResnetModel(d)
 
