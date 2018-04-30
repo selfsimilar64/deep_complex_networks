@@ -443,7 +443,7 @@ class SaveBestModel(Callback):
 # ResNet Learning-rate Schedules.
 #
 
-"""
+
 def schedule(epoch):
     if   epoch >=   0 and epoch <  2:
         lrate = 0.01
@@ -455,22 +455,6 @@ def schedule(epoch):
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     elif epoch >= 18 and epoch < 20:
         lrate = 0.005
-        if epoch == 18:
-            L.getLogger("train").info("Current learning rate value is "+str(lrate))
-    return lrate
-"""
-
-def schedule(epoch):
-    if   epoch >=   0 and epoch <  2:
-        lrate = 0.025
-        if epoch == 0:
-            L.getLogger("train").info("Current learning rate value is "+str(lrate))
-    elif epoch >=  2 and epoch < 18:
-        lrate = 0.075
-        if epoch == 2:
-            L.getLogger("train").info("Current learning rate value is "+str(lrate))
-    elif epoch >= 18 and epoch < 20:
-        lrate = 0.01
         if epoch == 18:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     return lrate
@@ -512,18 +496,6 @@ def summarizeEnvvar(var):
 #
 # Create custom activation layers
 #
-
-
-class ReLU_sgn(Activation):
-    def __init__(self, activation, **kwargs):
-        super(ReLU_sgn, self).__init__(activation, **kwargs)
-        self.__name__ = 'ReLU_sgn'
-
-
-class ReLU_sgn_xor(Activation):
-    def __init__(self, activation, **kwargs):
-        super(ReLU_sgn_xor, self).__init__(activation, **kwargs)
-        self.__name__ = 'ReLU_sgn_xor'
 
 
 class Tanh_z(Activation):
@@ -574,18 +546,6 @@ def relu_wide(Z):
     W = K.concatenate([X, Y], axis=1)
     return W
 
-def relu_sgn(Z):
-    input_dim = K.shape(Z)[1] // 2
-    X = Z[:, :input_dim]
-    Y = Z[:, input_dim:]
-    Z_mod = K.sqrt(K.pow(X, 2) + K.pow(Y, 2))
-    X_proj = X / Z_mod
-    Y_proj = Y / Z_mod
-    U = K.maximum(X, 0) * X_proj
-    V = K.maximum(Y, 0) * Y_proj
-    W = K.concatenate([U, V], axis=1)
-    return W
-
 def cardioid(Z):
     # Maximum activation at 1
     input_dim = K.shape(Z)[1] // 2
@@ -610,24 +570,6 @@ def cardioid_tilt(Z):
     W = K.concatenate([U, V], axis=1)
     return W
 
-def relu_sgn_xor(Z):
-    input_dim = K.shape(Z)[1] // 2
-    X = Z[:, :input_dim]
-    Y = Z[:, input_dim:]
-    Z_mod = K.sqrt(K.pow(X, 2) + K.pow(Y, 2))
-    X_proj = X / Z_mod
-    Y_proj = Y / Z_mod
-    Z_arg = K.T.arctan2(Y, X)
-    Z_quad2 = K.sign(K.clip(Z_arg, math.pi / 2.0, math.pi))
-    Z_quad4 = -K.sign(K.clip(Z_arg, math.pi / -2.0, 0))
-    Z_xor = Z_quad2 + Z_quad4
-    X_mask = X_proj * Z_xor
-    Y_mask = Y_proj * Z_xor
-    U = K.maximum(X, 0) * X_mask
-    V = K.maximum(Y, 0) * Y_mask
-    W = K.concatenate([U, V], axis=1)
-    return W
-
 def tanh_z(Z):
     input_dim = K.shape(Z)[1] // 2
     X0 = Z[:, :input_dim]
@@ -646,6 +588,23 @@ def tanh_z(Z):
     W = K.concatenate([U, V], axis=1)
 
     return W
+
+def asinh_z(Z):
+    input_dim = K.shape(Z)[1] // 2
+    X = Z[:, :input_dim]
+    Y = Z[:, input_dim:]
+    U = K.pow(X, 2) - K.pow(Y, 2) + 1
+    V = 2*X*Y
+    W_mod = K.sqrt(K.pow(U, 2) + K.pow(V, 2))
+    W_arg = K.T.arctan2(V, U)
+    Q = K.sqrt(W_mod)
+    A = X + Q * K.cos(W_arg/2)
+    B = Y + Q * K.sin(W_arg/2)
+    C_mod = K.sqrt(K.pow(A, 2) + K.pow(B, 2))
+    C_arg = K.T.arctan2(B, A)
+    D = K.log(C_mod)
+    E = K.concatenate([D, C_arg], axis=1)
+    return E
 
 #
 # TRAINING PROCESS
@@ -792,8 +751,6 @@ def train(d):
         #
 
         get_custom_objects().update({"tanh_z": Tanh_z(tanh_z),
-                                     "relu_sgn": ReLU_sgn(relu_sgn),
-                                     "relu_sgn_xor": ReLU_sgn_xor(relu_sgn_xor),
                                      "relu_wide": ReLU_wide(relu_wide),
                                      "cardioid": Cardioid(cardioid),
                                      "cardioid_tilt": Cardioid_tilt(cardioid_tilt)})
