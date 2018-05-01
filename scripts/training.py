@@ -12,6 +12,7 @@ from   complexnn                             import ComplexBN,\
                                                     FFT,IFFT,FFT2,IFFT2,\
                                                     SpectralPooling1D,SpectralPooling2D
 from complexnn import GetImag, GetReal
+from matplotlib                              import pyplot as plt
 import math
 import h5py                                  as     H
 import keras
@@ -777,24 +778,48 @@ def train(d):
         if d.vis == 1:
 
             get_pre_act = K.function([model.layers[0].input, K.learning_phase()],
-                                     [model.layers[3].output])
-            get_post_act = K.function([model.layers[0].input, K.learning_phase()],
-                                      [model.layers[4].output])
+                                     [model.layers[25].output])
+            get_post_act = K.function([model.layers[25].input, K.learning_phase()],
+                                      [model.layers[26].output])
 
-            print model.layers[40]
-            print model.layers[40].__name__
-            print model.layers[41].__name__
-            print model.layers[42].__name__
-            print model.layers[43].__name__
-            print model.layers[44].__name__
-            print model.layers[45].__name__
+            print model.layers[25]
+            print model.layers[26]
+            print model.layers[27]
 
 
             # output in test mode = 0
             pre_act = get_pre_act([X_val, 0])[0]
             print 'pre_act: ', pre_act.shape
-            post_act = get_post_act([X_val, 0])[0]
+            post_act = get_post_act([pre_act, 0])[0]
             print 'post_act: ', post_act.shape
+
+            im_num = 20
+            channel_x = 5
+            channel_y = (pre_act.shape[1] // 2) + channel_x
+            im_real_prev = np.squeeze(pre_act[im_num, channel_x, :, :])
+            im_imag_prev = np.squeeze(pre_act[im_num, channel_y, :, :])
+            im_real_post = np.squeeze(post_act[im_num, channel_x, :, :])
+            im_imag_post = np.squeeze(post_act[im_num, channel_y, :, :])
+
+            # Show feature map before activation
+            plt.subplot(2, 4, 1)
+            plt.imshow(im_real_prev)
+            plt.subplot(2, 4, 2)
+            plt.imshow(im_imag_prev)
+            plt.subplot(2, 4, 3)
+            plt.imshow(np.sqrt(im_real_prev**2 + im_imag_prev**2))
+            plt.subplot(2, 4, 4)
+            plt.imshow(np.arctan2(im_imag_prev, im_real_prev))
+
+            # Show feature map after activation
+            plt.subplot(2, 4, 5)
+            plt.imshow(im_real_post)
+            plt.subplot(2, 4, 6)
+            plt.imshow(im_imag_post)
+            plt.subplot(2, 4, 7)
+            plt.imshow(np.sqrt(im_real_post ** 2 + im_imag_post ** 2))
+            plt.subplot(2, 4, 8)
+            plt.imshow(np.arctan2(im_imag_post, im_real_post))
 
     else:
         # Model
