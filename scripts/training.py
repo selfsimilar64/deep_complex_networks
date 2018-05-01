@@ -782,17 +782,12 @@ def train(d):
 
         model = getResnetModel(d)
 
-        """
-        get_3rd_layer_output = K.function([model.layers[0].input, K.learning_phase()],
-                                          [model.layers[3].output])
-        
+        get_pre_act = K.function([model.layers[0].input, K.learning_phase()],
+                                 [model.layers[3].output])
+        get_post_act = K.function([model.layers[0].input, K.learning_phase()],
+                                  [model.layers[4].output])
 
-        # output in test mode = 0
-        layer_output = get_3rd_layer_output([x, 0])[0]
 
-        # output in train mode = 1
-        layer_output = get_3rd_layer_output([x, 1])[0]
-        """
 
 
         # Optimizer
@@ -877,32 +872,41 @@ def train(d):
     # Enter training loop.
     #
 
+    if d.vis == 1:
 
-    L               .getLogger("entry").info("**********************************************")
-    if isResuming: L.getLogger("entry").info("*** Reentering Training Loop @ Epoch {:5d} ***".format(initialEpoch+1))
-    else:          L.getLogger("entry").info("***  Entering Training Loop  @ First Epoch ***")
-    L               .getLogger("entry").info("**********************************************")
+        # output in test mode = 0
+        pre_act = get_pre_act([X_val, 0])[0]
+        print 'pre_act: ', pre_act.shape
+        post_act = get_post_act([X_val, 0])[0]
+        print 'post_act: ', post_act.shape
 
-    model.fit_generator(generator       = datagen.flow(X_train, Y_train, batch_size=d.batch_size),
-                        steps_per_epoch = (len(X_train)+d.batch_size-1) // d.batch_size,
-                        epochs          = d.num_epochs,
-                        verbose         = 1,
-                        callbacks       = callbacks,
-                        validation_data = (X_val, Y_val),
-                        initial_epoch   = initialEpoch)
+    else:
 
-    #
-    # Dump histories.
-    #
+        L               .getLogger("entry").info("**********************************************")
+        if isResuming: L.getLogger("entry").info("*** Reentering Training Loop @ Epoch {:5d} ***".format(initialEpoch+1))
+        else:          L.getLogger("entry").info("***  Entering Training Loop  @ First Epoch ***")
+        L               .getLogger("entry").info("**********************************************")
 
-    np.savetxt(os.path.join(d.workdir, 'test_loss.txt'),  np.asarray(testErrCb.loss_history))
-    np.savetxt(os.path.join(d.workdir, 'test_acc.txt'),   np.asarray(testErrCb.acc_history))
-    np.savetxt(os.path.join(d.workdir, 'train_loss.txt'), np.asarray(trainValHistCb.train_loss))
-    np.savetxt(os.path.join(d.workdir, 'train_acc.txt'),  np.asarray(trainValHistCb.train_acc))
-    np.savetxt(os.path.join(d.workdir, 'val_loss.txt'),   np.asarray(trainValHistCb.val_loss))
-    np.savetxt(os.path.join(d.workdir, 'val_acc.txt'),    np.asarray(trainValHistCb.val_acc))
+        model.fit_generator(generator       = datagen.flow(X_train, Y_train, batch_size=d.batch_size),
+                            steps_per_epoch = (len(X_train)+d.batch_size-1) // d.batch_size,
+                            epochs          = d.num_epochs,
+                            verbose         = 1,
+                            callbacks       = callbacks,
+                            validation_data = (X_val, Y_val),
+                            initial_epoch   = initialEpoch)
 
-    # CIFAR-10:
-    # - Baseline
-    # - Baseline but with complex parametrization
-    # - Baseline but with spectral pooling
+        #
+        # Dump histories.
+        #
+
+        np.savetxt(os.path.join(d.workdir, 'test_loss.txt'),  np.asarray(testErrCb.loss_history))
+        np.savetxt(os.path.join(d.workdir, 'test_acc.txt'),   np.asarray(testErrCb.acc_history))
+        np.savetxt(os.path.join(d.workdir, 'train_loss.txt'), np.asarray(trainValHistCb.train_loss))
+        np.savetxt(os.path.join(d.workdir, 'train_acc.txt'),  np.asarray(trainValHistCb.train_acc))
+        np.savetxt(os.path.join(d.workdir, 'val_loss.txt'),   np.asarray(trainValHistCb.val_loss))
+        np.savetxt(os.path.join(d.workdir, 'val_acc.txt'),    np.asarray(trainValHistCb.val_acc))
+
+        # CIFAR-10:
+        # - Baseline
+        # - Baseline but with complex parametrization
+        # - Baseline but with spectral pooling
