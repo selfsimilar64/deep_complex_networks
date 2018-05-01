@@ -12,7 +12,7 @@ from   complexnn                             import ComplexBN,\
                                                     FFT,IFFT,FFT2,IFFT2,\
                                                     SpectralPooling1D,SpectralPooling2D
 from complexnn import GetImag, GetReal
-from matplotlib                              import pyplot as pylab
+from matplotlib                              import pyplot as plt
 import pylab
 import math
 import h5py                                  as     H
