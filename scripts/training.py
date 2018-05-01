@@ -752,6 +752,7 @@ def train(d):
     chkptFilename = os.path.join(d.workdir, "chkpts", "ModelChkpt.hdf5")
     isResuming    = os.path.isfile(chkptFilename)
     if isResuming:
+
         # Reload Model and Optimizer
         L.getLogger("entry").info("Reloading a model from "+chkptFilename+" ...")
         np.random.seed(d.seed % 2**32)
@@ -767,18 +768,26 @@ def train(d):
             initialEpoch = int(f["initialEpoch"][...])
         L.getLogger("entry").info("Training will restart at epoch {:5d}.".format(initialEpoch+1))
         L.getLogger("entry").info("Compilation Started.")
+
+        if d.vis == 1:
+
+            get_pre_act = K.function([model.layers[0].input, K.learning_phase()],
+                                     [model.layers[3].output])
+            get_post_act = K.function([model.layers[0].input, K.learning_phase()],
+                                      [model.layers[4].output])
+
+            # output in test mode = 0
+            pre_act = get_pre_act([X_val, 0])[0]
+            print 'pre_act: ', pre_act.shape
+            post_act = get_post_act([X_val, 0])[0]
+            print 'post_act: ', post_act.shape
+
     else:
         # Model
         L.getLogger("entry").info("Creating new model from scratch.")
         np.random.seed(d.seed % 2**32)
 
         model = getResnetModel(d)
-
-        get_pre_act = K.function([model.layers[0].input, K.learning_phase()],
-                                 [model.layers[3].output])
-        get_post_act = K.function([model.layers[0].input, K.learning_phase()],
-                                  [model.layers[4].output])
-
 
 
 
@@ -864,41 +873,32 @@ def train(d):
     # Enter training loop.
     #
 
-    if d.vis == 1:
 
-        # output in test mode = 0
-        pre_act = get_pre_act([X_val, 0])[0]
-        print 'pre_act: ', pre_act.shape
-        post_act = get_post_act([X_val, 0])[0]
-        print 'post_act: ', post_act.shape
+    L               .getLogger("entry").info("**********************************************")
+    if isResuming: L.getLogger("entry").info("*** Reentering Training Loop @ Epoch {:5d} ***".format(initialEpoch+1))
+    else:          L.getLogger("entry").info("***  Entering Training Loop  @ First Epoch ***")
+    L               .getLogger("entry").info("**********************************************")
 
-    else:
+    model.fit_generator(generator       = datagen.flow(X_train, Y_train, batch_size=d.batch_size),
+                        steps_per_epoch = (len(X_train)+d.batch_size-1) // d.batch_size,
+                        epochs          = d.num_epochs,
+                        verbose         = 1,
+                        callbacks       = callbacks,
+                        validation_data = (X_val, Y_val),
+                        initial_epoch   = initialEpoch)
 
-        L               .getLogger("entry").info("**********************************************")
-        if isResuming: L.getLogger("entry").info("*** Reentering Training Loop @ Epoch {:5d} ***".format(initialEpoch+1))
-        else:          L.getLogger("entry").info("***  Entering Training Loop  @ First Epoch ***")
-        L               .getLogger("entry").info("**********************************************")
+    #
+    # Dump histories.
+    #
 
-        model.fit_generator(generator       = datagen.flow(X_train, Y_train, batch_size=d.batch_size),
-                            steps_per_epoch = (len(X_train)+d.batch_size-1) // d.batch_size,
-                            epochs          = d.num_epochs,
-                            verbose         = 1,
-                            callbacks       = callbacks,
-                            validation_data = (X_val, Y_val),
-                            initial_epoch   = initialEpoch)
+    np.savetxt(os.path.join(d.workdir, 'test_loss.txt'),  np.asarray(testErrCb.loss_history))
+    np.savetxt(os.path.join(d.workdir, 'test_acc.txt'),   np.asarray(testErrCb.acc_history))
+    np.savetxt(os.path.join(d.workdir, 'train_loss.txt'), np.asarray(trainValHistCb.train_loss))
+    np.savetxt(os.path.join(d.workdir, 'train_acc.txt'),  np.asarray(trainValHistCb.train_acc))
+    np.savetxt(os.path.join(d.workdir, 'val_loss.txt'),   np.asarray(trainValHistCb.val_loss))
+    np.savetxt(os.path.join(d.workdir, 'val_acc.txt'),    np.asarray(trainValHistCb.val_acc))
 
-        #
-        # Dump histories.
-        #
-
-        np.savetxt(os.path.join(d.workdir, 'test_loss.txt'),  np.asarray(testErrCb.loss_history))
-        np.savetxt(os.path.join(d.workdir, 'test_acc.txt'),   np.asarray(testErrCb.acc_history))
-        np.savetxt(os.path.join(d.workdir, 'train_loss.txt'), np.asarray(trainValHistCb.train_loss))
-        np.savetxt(os.path.join(d.workdir, 'train_acc.txt'),  np.asarray(trainValHistCb.train_acc))
-        np.savetxt(os.path.join(d.workdir, 'val_loss.txt'),   np.asarray(trainValHistCb.val_loss))
-        np.savetxt(os.path.join(d.workdir, 'val_acc.txt'),    np.asarray(trainValHistCb.val_acc))
-
-        # CIFAR-10:
-        # - Baseline
-        # - Baseline but with complex parametrization
-        # - Baseline but with spectral pooling
+    # CIFAR-10:
+    # - Baseline
+    # - Baseline but with complex parametrization
+    # - Baseline but with spectral pooling
