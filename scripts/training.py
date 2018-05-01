@@ -761,6 +761,11 @@ def train(d):
             "ComplexBatchNormalization": ComplexBN,
             "GetReal":                   GetReal,
             "GetImag":                   GetImag,
+            "tanh_z":                    Tanh_z(tanh_z),
+            "relu_wide":                 ReLU_wide(relu_wide),
+            "cardioid":                  Cardioid(cardioid),
+            "cardioid_tilt":             Cardioid_tilt(cardioid_tilt),
+            "asinh_z":                   Asinh_z(asinh_z),
         })
         L.getLogger("entry").info("... reloading complete.")
 
