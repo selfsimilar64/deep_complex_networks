@@ -733,6 +733,15 @@ def train(d):
     L.getLogger("entry").info("Test       set shape: "+str(X_test.shape))
     L.getLogger("entry").info("Loaded  dataset {:s}.".format(d.dataset))
 
+    #
+    # ADD CUSTOM ACTIVATIONS HERE
+    #
+
+    get_custom_objects().update({"tanh_z": Tanh_z(tanh_z),
+                                 "relu_wide": ReLU_wide(relu_wide),
+                                 "cardioid": Cardioid(cardioid),
+                                 "cardioid_tilt": Cardioid_tilt(cardioid_tilt),
+                                 "asinh_z": Asinh_z(asinh_z)})
 
 
     #
@@ -762,23 +771,6 @@ def train(d):
         # Model
         L.getLogger("entry").info("Creating new model from scratch.")
         np.random.seed(d.seed % 2**32)
-
-
-
-
-
-
-
-
-        #
-        # ADD CUSTOM ACTIVATIONS HERE
-        #
-
-        get_custom_objects().update({"tanh_z": Tanh_z(tanh_z),
-                                     "relu_wide": ReLU_wide(relu_wide),
-                                     "cardioid": Cardioid(cardioid),
-                                     "cardioid_tilt": Cardioid_tilt(cardioid_tilt),
-                                     "asinh_z": Asinh_z(asinh_z)})
 
         model = getResnetModel(d)
 
