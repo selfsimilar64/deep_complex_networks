@@ -468,13 +468,13 @@ def schedule(epoch):
         lrate = 0.1
         if epoch == 0:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
-    elif epoch >=  5 and epoch < 8:
+    elif epoch >=  5 and epoch < 10:
         lrate = 0.075
-        if epoch == 2:
+        if epoch == 5:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
-    elif epoch >= 8 and epoch < 11:
+    elif epoch >= 10 and epoch < 15:
         lrate = 0.025
-        if epoch == 18:
+        if epoch == 10:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     return lrate
 
