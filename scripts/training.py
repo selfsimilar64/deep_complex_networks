@@ -12,7 +12,8 @@ from   complexnn                             import ComplexBN,\
                                                     FFT,IFFT,FFT2,IFFT2,\
                                                     SpectralPooling1D,SpectralPooling2D
 from complexnn import GetImag, GetReal
-from matplotlib                              import pyplot as plt
+from matplotlib                              import pyplot as pylab
+import pylab
 import math
 import h5py                                  as     H
 import keras
@@ -802,26 +803,26 @@ def train(d):
             im_imag_post = np.squeeze(post_act[im_num, channel_y, :, :])
 
             # Show feature map before activation
-            plt.subplot(2, 4, 1)
-            plt.imshow(im_real_prev)
-            plt.subplot(2, 4, 2)
-            plt.imshow(im_imag_prev)
-            plt.subplot(2, 4, 3)
-            plt.imshow(np.sqrt(im_real_prev**2 + im_imag_prev**2))
-            plt.subplot(2, 4, 4)
-            plt.imshow(np.arctan2(im_imag_prev, im_real_prev))
+            pylab.subplot(2, 4, 1)
+            pylab.imshow(im_real_prev)
+            pylab.subplot(2, 4, 2)
+            pylab.imshow(im_imag_prev)
+            pylab.subplot(2, 4, 3)
+            pylab.imshow(np.sqrt(im_real_prev**2 + im_imag_prev**2))
+            pylab.subplot(2, 4, 4)
+            pylab.imshow(np.arctan2(im_imag_prev, im_real_prev))
 
             # Show feature map after activation
-            plt.subplot(2, 4, 5)
-            plt.imshow(im_real_post)
-            plt.subplot(2, 4, 6)
-            plt.imshow(im_imag_post)
-            plt.subplot(2, 4, 7)
-            plt.imshow(np.sqrt(im_real_post ** 2 + im_imag_post ** 2))
-            plt.subplot(2, 4, 8)
-            plt.imshow(np.arctan2(im_imag_post, im_real_post))
+            pylab.subplot(2, 4, 5)
+            pylab.imshow(im_real_post)
+            pylab.subplot(2, 4, 6)
+            pylab.imshow(im_imag_post)
+            pylab.subplot(2, 4, 7)
+            pylab.imshow(np.sqrt(im_real_post ** 2 + im_imag_post ** 2))
+            pylab.subplot(2, 4, 8)
+            pylab.imshow(np.arctan2(im_imag_post, im_real_post))
 
-            plt.show(block=True)
+            pylab.show()
 
     else:
         # Model
