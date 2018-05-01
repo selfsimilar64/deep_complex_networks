@@ -781,6 +781,15 @@ def train(d):
             get_post_act = K.function([model.layers[0].input, K.learning_phase()],
                                       [model.layers[4].output])
 
+            print model.layers[40]
+            print model.layers[40].__name__
+            print model.layers[41].__name__
+            print model.layers[42].__name__
+            print model.layers[43].__name__
+            print model.layers[44].__name__
+            print model.layers[45].__name__
+
+
             # output in test mode = 0
             pre_act = get_pre_act([X_val, 0])[0]
             print 'pre_act: ', pre_act.shape
