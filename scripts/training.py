@@ -782,16 +782,11 @@ def train(d):
             get_post_act = K.function([model.layers[25].input, K.learning_phase()],
                                       [model.layers[26].output])
 
-            print model.layers[25]
             print model.layers[26]
-            print model.layers[27]
-
 
             # output in test mode = 0
             pre_act = get_pre_act([X_val, 0])[0]
-            print 'pre_act: ', pre_act.shape
             post_act = get_post_act([pre_act, 0])[0]
-            print 'post_act: ', post_act.shape
 
             im_num = 20
             channel_x = 5
@@ -805,15 +800,17 @@ def train(d):
             im_mod_post = np.sqrt(im_real_post ** 2 + im_imag_post ** 2)
             im_arg_post = np.arctan2(im_imag_post, im_real_post)
 
+            pngWriter = png.Writer()
+
             # Show feature map before activation
-            png.from_array(im_real_prev).save('im_real_prev.png')
-            png.from_array(im_imag_prev).save('im_imag_prev.png')
-            png.from_array(im_mod_prev).save('im_mod_prev.png')
-            png.from_array(im_arg_prev).save('im_arg_prev.png')
-            png.from_array(im_real_post).save('im_real_post.png')
-            png.from_array(im_imag_post).save('im_imag_post.png')
-            png.from_array(im_mod_post).save('im_mod_post.png')
-            png.from_array(im_arg_post).save('im_arg_post.png')
+            pngWriter.write('im_real_prev.png', im_real_prev)
+            pngWriter.write('im_imag_prev.png', im_imag_prev)
+            pngWriter.write('im_mod_prev.png', im_mod_prev)
+            pngWriter.write('im_arg_prev.png', im_arg_prev)
+            pngWriter.write('im_real_post.png', im_real_post)
+            pngWriter.write('im_imag_post.png', im_imag_post)
+            pngWriter.write('im_mod_post.png', im_mod_post)
+            pngWriter.write('im_arg_post.png', im_arg_post)
 
             print 'Done writing files (I hope) ....'
 
