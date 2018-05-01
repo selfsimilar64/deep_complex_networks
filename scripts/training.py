@@ -463,16 +463,16 @@ def schedule(epoch):
 
 
 def schedule(epoch):
-    if   epoch >=   0 and epoch <  3:
-        lrate = 0.025
+    if   epoch >=   0 and epoch <  15:
+        lrate = 0.075
         if epoch == 0:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
-    elif epoch >=  3 and epoch < 20:
-        lrate = 0.075
+    elif epoch >=  15 and epoch < 20:
+        lrate = 0.05
         if epoch == 2:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     elif epoch >= 20 and epoch < 25:
-        lrate = 0.01
+        lrate = 0.025
         if epoch == 18:
             L.getLogger("train").info("Current learning rate value is "+str(lrate))
     return lrate
@@ -781,6 +781,15 @@ def train(d):
                                      "asinh_z": Asinh_z(asinh_z)})
 
         model = getResnetModel(d)
+
+        get_3rd_layer_output = K.function([model.layers[0].input, K.learning_phase()],
+                                          [model.layers[3].output])
+
+        # output in test mode = 0
+        layer_output = get_3rd_layer_output([x, 0])[0]
+
+        # output in train mode = 1
+        layer_output = get_3rd_layer_output([x, 1])[0]
 
         # Optimizer
         if   d.optimizer in ["sgd", "nag"]:

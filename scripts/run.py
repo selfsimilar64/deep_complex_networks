@@ -183,7 +183,8 @@ class Train(Subcommand):
 		
 		np.random.seed(d.seed % 2**32)
 		
-		import training;training.train(d)
+		import training
+		training.train(d)
 
 
 
