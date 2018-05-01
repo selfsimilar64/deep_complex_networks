@@ -782,14 +782,18 @@ def train(d):
 
         model = getResnetModel(d)
 
+        """
         get_3rd_layer_output = K.function([model.layers[0].input, K.learning_phase()],
                                           [model.layers[3].output])
+        
 
         # output in test mode = 0
         layer_output = get_3rd_layer_output([x, 0])[0]
 
         # output in train mode = 1
         layer_output = get_3rd_layer_output([x, 1])[0]
+        """
+
 
         # Optimizer
         if   d.optimizer in ["sgd", "nag"]:
