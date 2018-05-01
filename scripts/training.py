@@ -12,8 +12,7 @@ from   complexnn                             import ComplexBN,\
                                                     FFT,IFFT,FFT2,IFFT2,\
                                                     SpectralPooling1D,SpectralPooling2D
 from complexnn import GetImag, GetReal
-from matplotlib                              import pyplot as plt
-import pylab
+import png
 import math
 import h5py                                  as     H
 import keras
@@ -799,30 +798,24 @@ def train(d):
             channel_y = (pre_act.shape[1] // 2) + channel_x
             im_real_prev = np.squeeze(pre_act[im_num, channel_x, :, :])
             im_imag_prev = np.squeeze(pre_act[im_num, channel_y, :, :])
+            im_mod_prev = np.sqrt(im_real_prev ** 2 + im_imag_prev ** 2)
+            im_arg_prev = np.arctan2(im_imag_prev, im_real_prev)
             im_real_post = np.squeeze(post_act[im_num, channel_x, :, :])
             im_imag_post = np.squeeze(post_act[im_num, channel_y, :, :])
+            im_mod_post = np.sqrt(im_real_post ** 2 + im_imag_post ** 2)
+            im_arg_post = np.arctan2(im_imag_post, im_real_post)
 
             # Show feature map before activation
-            pylab.subplot(2, 4, 1)
-            pylab.imshow(im_real_prev)
-            pylab.subplot(2, 4, 2)
-            pylab.imshow(im_imag_prev)
-            pylab.subplot(2, 4, 3)
-            pylab.imshow(np.sqrt(im_real_prev**2 + im_imag_prev**2))
-            pylab.subplot(2, 4, 4)
-            pylab.imshow(np.arctan2(im_imag_prev, im_real_prev))
+            png.from_array(im_real_prev).save('im_real_prev.png')
+            png.from_array(im_imag_prev).save('im_imag_prev.png')
+            png.from_array(im_mod_prev).save('im_mod_prev.png')
+            png.from_array(im_arg_prev).save('im_arg_prev.png')
+            png.from_array(im_real_post).save('im_real_post.png')
+            png.from_array(im_imag_post).save('im_imag_post.png')
+            png.from_array(im_mod_post).save('im_mod_post.png')
+            png.from_array(im_arg_post).save('im_arg_post.png')
 
-            # Show feature map after activation
-            pylab.subplot(2, 4, 5)
-            pylab.imshow(im_real_post)
-            pylab.subplot(2, 4, 6)
-            pylab.imshow(im_imag_post)
-            pylab.subplot(2, 4, 7)
-            pylab.imshow(np.sqrt(im_real_post ** 2 + im_imag_post ** 2))
-            pylab.subplot(2, 4, 8)
-            pylab.imshow(np.arctan2(im_imag_post, im_real_post))
-
-            pylab.show()
+            print 'Done writing files (I hope) ....'
 
     else:
         # Model
