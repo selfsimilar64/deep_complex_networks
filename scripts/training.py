@@ -521,33 +521,33 @@ class Tanh_z(Activation):
 
     def __init__(self, activation, **kwargs):
         super(Tanh_z, self).__init__(activation, **kwargs)
-        self.__name__ = 'Tanh_z'
+        self.__name__ = 'tanh_z'
 
 class Asinh_z(Activation):
 
     def __init__(self, activation, **kwargs):
         super(Asinh_z, self).__init__(activation, **kwargs)
-        self.__name__ = 'Asinh_z'
+        self.__name__ = 'asinh_z'
 
 class ReLU_wide(Activation):
 
     def __init__(self, activation, **kwargs):
         super(ReLU_wide, self).__init__(activation, **kwargs)
-        self.__name__ = 'ReLU_wide'
+        self.__name__ = 'relu_wide'
 
 
 class Cardioid(Activation):
 
     def __init__(self, activation, **kwargs):
         super(Cardioid, self).__init__(activation, **kwargs)
-        self.__name__ = 'Cardioid'
+        self.__name__ = 'cardioid'
 
 
 class Cardioid_tilt(Activation):
 
     def __init__(self, activation, **kwargs):
         super(Cardioid_tilt, self).__init__(activation, **kwargs)
-        self.__name__ = 'Cardioid_tilt'
+        self.__name__ = 'cardioid_tilt'
 
 
 def relu_wide(Z):
