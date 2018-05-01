@@ -821,7 +821,7 @@ def train(d):
             plt.subplot(2, 4, 8)
             plt.imshow(np.arctan2(im_imag_post, im_real_post))
 
-            plt.show()
+            plt.show(block=True)
 
     else:
         # Model
