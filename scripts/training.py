@@ -800,7 +800,7 @@ def train(d):
             im_mod_post = np.sqrt(im_real_post ** 2 + im_imag_post ** 2)
             im_arg_post = np.arctan2(im_imag_post, im_real_post)
 
-            pngWriter = png.Writer()
+            pngWriter = png.Writer(width=im_real_prev.shape[0], height=im_real_prev.shape[1])
 
             # Show feature map before activation
             pngWriter.write('im_real_prev.png', im_real_prev)
