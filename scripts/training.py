@@ -522,13 +522,13 @@ class Tanh_z(Activation):
 
     def __init__(self, activation, **kwargs):
         super(Tanh_z, self).__init__(activation, **kwargs)
-        self.__name__ = 'tanh_z'
+        self.__name__ = 'Tanh_z'
 
 class Asinh_z(Activation):
 
     def __init__(self, activation, **kwargs):
         super(Asinh_z, self).__init__(activation, **kwargs)
-        self.__name__ = 'asinh_z'
+        self.__name__ = 'Asinh_z'
 
 class ReLU_wide(Activation):
 
@@ -541,14 +541,14 @@ class Cardioid(Activation):
 
     def __init__(self, activation, **kwargs):
         super(Cardioid, self).__init__(activation, **kwargs)
-        self.__name__ = 'cardioid'
+        self.__name__ = 'Cardioid'
 
 
 class Cardioid_tilt(Activation):
 
     def __init__(self, activation, **kwargs):
         super(Cardioid_tilt, self).__init__(activation, **kwargs)
-        self.__name__ = 'cardioid_tilt'
+        self.__name__ = 'Cardioid_tilt'
 
 
 def relu_wide(Z):
@@ -762,11 +762,11 @@ def train(d):
             "ComplexBatchNormalization": ComplexBN,
             "GetReal":                   GetReal,
             "GetImag":                   GetImag,
-            "tanh_z":                    Tanh_z(tanh_z),
+            "Tanh_z":                    Tanh_z(tanh_z),
             "relu_wide":                 ReLU_wide(relu_wide),
-            "cardioid":                  Cardioid(cardioid),
+            "Cardioid":                  Cardioid(cardioid),
             "Cardioid_tilt":             Cardioid_tilt(cardioid_tilt),
-            "asinh_z":                   Asinh_z(asinh_z),
+            "Asinh_z":                   Asinh_z(asinh_z),
         })
         L.getLogger("entry").info("... reloading complete.")
 
