@@ -793,6 +793,8 @@ def train(d):
             channel_y = (pre_act.shape[1] // 2) + channel_x
             im = np.squeeze(X_val[im_num, :, :, :])
             print im.shape
+            im = np.moveaxis(im, 0, -1)
+            print im.shape
             im_real_prev = np.squeeze(pre_act[im_num, channel_x, :, :])
             im_imag_prev = np.squeeze(pre_act[im_num, channel_y, :, :])
             im_mod_prev = np.sqrt(im_real_prev ** 2 + im_imag_prev ** 2)
