@@ -788,11 +788,10 @@ def train(d):
             pre_act = get_pre_act([X_val, 0])[0]
             post_act = get_post_act([pre_act, 0])[0]
 
-            im_num = 50
+            im_num = 55
             channel_x = 5
             channel_y = (pre_act.shape[1] // 2) + channel_x
-            im_color = np.squeeze(X_val[im_num, :, :, :])
-            im_grayscale = 0.2989 * im_color[0, :, :] + 0.5870 * im_color[1, :, :] + 0.1140 * im_color[2, :, :]
+            im = np.squeeze(X_val[im_num, :, :, :])
             im_real_prev = np.squeeze(pre_act[im_num, channel_x, :, :])
             im_imag_prev = np.squeeze(pre_act[im_num, channel_y, :, :])
             im_mod_prev = np.sqrt(im_real_prev ** 2 + im_imag_prev ** 2)
@@ -806,7 +805,7 @@ def train(d):
 
             # Show feature map before activation
             f = open('im.png', 'w')
-            pngWriter.write(f, (im_grayscale*255.0).astype('uint8'))
+            png.Writer(width=im_real_prev.shape[0], height=im_real_prev.shape[1]).write(f, (im*255.0).astype('uint8'))
             f.close()
             f = open('im_real_prev.png', 'w')
             pngWriter.write(f, (im_real_prev*255.0).astype('uint8'))
