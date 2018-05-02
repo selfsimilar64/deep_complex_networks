@@ -12,7 +12,7 @@ from   complexnn                             import ComplexBN,\
                                                     FFT,IFFT,FFT2,IFFT2,\
                                                     SpectralPooling1D,SpectralPooling2D
 from complexnn import GetImag, GetReal
-import png
+from scipy.misc                              import imsave
 import math
 import h5py                                  as     H
 import keras
@@ -791,7 +791,9 @@ def train(d):
             im_num = 55
             channel_x = 5
             channel_y = (pre_act.shape[1] // 2) + channel_x
-            im = np.squeeze(X_val[im_num, :, :, :]).reshape(3*32, 32)
+            im = np.squeeze(X_val[im_num, :, :, :])
+            im.swapaxes(0, 1)
+            im.swapaxes(0, 2)
             im_real_prev = np.squeeze(pre_act[im_num, channel_x, :, :])
             im_imag_prev = np.squeeze(pre_act[im_num, channel_y, :, :])
             im_mod_prev = np.sqrt(im_real_prev ** 2 + im_imag_prev ** 2)
@@ -801,35 +803,33 @@ def train(d):
             im_mod_post = np.sqrt(im_real_post ** 2 + im_imag_post ** 2)
             im_arg_post = np.arctan2(im_imag_post, im_real_post)
 
-            pngWriter = png.Writer(width=im_real_prev.shape[0], height=im_real_prev.shape[1], greyscale=True)
-
             # Show feature map before activation
             f = open('im.png', 'w')
-            png.Writer(width=im_real_prev.shape[0], height=im_real_prev.shape[1]).write(f, (im*255.0).astype('uint8'))
+            imsave(f, (im*255.0).astype('uint8'))
             f.close()
             f = open('im_real_prev.png', 'w')
-            pngWriter.write(f, (im_real_prev*255.0).astype('uint8'))
+            imsave(f, (im_real_prev*255.0).astype('uint8'))
             f.close()
             f = open('im_imag_prev.png', 'w')
-            pngWriter.write(f, (im_imag_prev*255.0).astype('uint8'))
+            imsave(f, (im_imag_prev*255.0).astype('uint8'))
             f.close()
             f = open('im_mod_prev.png', 'w')
-            pngWriter.write(f, (im_mod_prev*255.0).astype('uint8'))
+            imsave(f, (im_mod_prev*255.0).astype('uint8'))
             f.close()
             f = open('im_arg_prev.png', 'w')
-            pngWriter.write(f, (im_arg_prev*255.0).astype('uint8'))
+            imsave(f, (im_arg_prev*255.0).astype('uint8'))
             f.close()
             f = open('im_real_post.png', 'w')
-            pngWriter.write(f, (im_real_post*255.0).astype('uint8'))
+            imsave(f, (im_real_post*255.0).astype('uint8'))
             f.close()
             f = open('im_imag_post.png', 'w')
-            pngWriter.write(f, (im_imag_post*255.0).astype('uint8'))
+            imsave(f, (im_imag_post*255.0).astype('uint8'))
             f.close()
             f = open('im_mod_post.png', 'w')
-            pngWriter.write(f, (im_mod_post*255.0).astype('uint8'))
+            imsave(f, (im_mod_post*255.0).astype('uint8'))
             f.close()
             f = open('im_arg_post.png', 'w')
-            pngWriter.write(f, (im_arg_post*255.0).astype('uint8'))
+            imsave(f, (im_arg_post*255.0).astype('uint8'))
             f.close()
 
             print 'Done writing files (I hope) ....'
